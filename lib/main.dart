@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:convert';
 import 'dart:math' as Math;
@@ -5,33 +6,35 @@ import 'dart:math' as Math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/gestures.dart';
-import 'package:peek/models/company.dart';
-//import 'package:transparent_image/transparent_image.dart';
+import 'package:yame/models/company.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_candlesticks/flutter_candlesticks.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 //import 'package:intl/intl.dart';
 //import 'package:flutter_range_slider/flutter_range_slider.dart';
 
-import 'package:peek/models/sectors_model.dart';
-import 'package:peek/models/lists.dart';
-import 'package:peek/models/quote.dart';
-import 'package:peek/models/charts.dart';
-import 'package:peek/models/stats.dart';
-import 'package:peek/models/financials.dart';
+import 'package:yame/models/sectors_model.dart';
+import 'package:yame/models/lists.dart';
+import 'package:yame/models/quote.dart';
+import 'package:yame/models/charts.dart';
+import 'package:yame/models/stats.dart';
+import 'package:yame/models/financials.dart';
 
-import 'package:peek/blocs/sectors_bloc.dart';
-import 'package:peek/blocs/lists_bloc.dart';
-import 'package:peek/blocs/peers_bloc.dart';
-import 'package:peek/blocs/collections_bloc.dart';
-import 'package:peek/blocs/charts_bloc.dart';
-import 'package:peek/blocs/company_info_bloc.dart';
-import 'package:peek/blocs/stats_bloc.dart';
-import 'package:peek/blocs/financials_bloc.dart';
+import 'package:yame/blocs/sectors_bloc.dart';
+import 'package:yame/blocs/lists_bloc.dart';
+import 'package:yame/blocs/peers_bloc.dart';
+import 'package:yame/blocs/collections_bloc.dart';
+import 'package:yame/blocs/charts_bloc.dart';
+import 'package:yame/blocs/company_info_bloc.dart';
+import 'package:yame/blocs/stats_bloc.dart';
+import 'package:yame/blocs/financials_bloc.dart';
 
-import 'package:peek/providers/iex_api_provider.dart';
-import 'package:peek/network/iex_api_proxy.dart';
-import 'package:peek/network/unsplash_api_proxy.dart';
+import 'package:yame/providers/iex_api_provider.dart';
+import 'package:yame/network/iex_api_proxy.dart';
+import 'package:yame/network/unsplash_api_proxy.dart';
 
 const double kOverlayBoxWidth = 160.0;
 const double kOverlayBoxHeight = 160.0;
@@ -45,7 +48,7 @@ class ValuePeekApp extends StatelessWidget {
     return IexApiProvider(
       sBloc: SectorBloc(IexApiProxy.getInstance()),
       child: MaterialApp(
-          title: "ValuePeek",
+          title: "Yame",
           routes: {
             //'/': (c) => ValuePeekHome(),
             '/sector': (_) => SectorInformation('Energy', 0.0)
@@ -57,7 +60,44 @@ class ValuePeekApp extends StatelessWidget {
               accentColor: Color(0xFFed8d8d),
               backgroundColor: Color(0xFF529C82),
               secondaryHeaderColor: Color(0xFF4d4545)),
-          home: ValuePeekHome()),
+          home: SplashPage()),
+    );
+  }
+}
+
+class SplashPage extends StatefulWidget {
+  @override
+  _SplashPageState createState() => new _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  Future<bool> _getAgreedState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isAgreedPref') ?? false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getAgreedState().then((value) {
+      print(value);
+      if (value) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => ValuePeekHome()));
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => AttributionPage()));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
@@ -65,7 +105,6 @@ class ValuePeekApp extends StatelessWidget {
 class ValuePeekHome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return ValuePeekHomeState();
   }
 }
@@ -135,11 +174,6 @@ class ValuePeekHomeState extends State<ValuePeekHome>
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-        drawer: Drawer(
-          child: Center(
-            child: Text("More"),
-          ),
-        ),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.arrow_upward),
             onPressed: () {
@@ -153,14 +187,12 @@ class ValuePeekHomeState extends State<ValuePeekHome>
             return [
               SliverAppBar(
                 automaticallyImplyLeading: false,
-                leading: IconButton(icon: Icon(Icons.menu), onPressed: (){
-                 Scaffold.of(ctx).openDrawer();
-                }),
                 title: const Text(
-                  'PEEK',
+                  'YAME',
                   style: TextStyle(
                     color: Colors.white,
-                    letterSpacing: 4.0,
+                    fontFamily: 'Pacifico',
+                    letterSpacing: 2.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -182,7 +214,7 @@ class ValuePeekHomeState extends State<ValuePeekHome>
                       losersListBloc.refresh();
                       infocusListBloc.refresh();
                     });
-                    return Future.delayed(Duration(milliseconds: 0));
+                    return Future.delayed(Duration(milliseconds: 100));
                   },
                   child: CustomScrollView(
                     physics: BouncingScrollPhysics(),
@@ -633,7 +665,16 @@ class ValuePeekHomeState extends State<ValuePeekHome>
                             data.data as List<SectorModel>);
                       }),
                       SliverPadding(
-                          padding: EdgeInsets.symmetric(vertical: 48.0))
+                        padding: EdgeInsets.symmetric(vertical: 48.0),
+                        sliver: SliverToBoxAdapter(
+                          child: Center(
+                            child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(4.0),
+                                child: AttributionWidget()),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -2351,7 +2392,7 @@ class _QuoteInformationState extends State<QuoteInformation> {
                                         child: IconButton(
                                         icon: Icon(Icons.refresh,
                                             size: 32.0, color: Colors.white70),
-                                        onPressed: (){
+                                        onPressed: () {
                                           setState(() {
                                             statsBloc.refresh();
                                           });
@@ -2918,16 +2959,17 @@ class _QuoteInformationState extends State<QuoteInformation> {
                                     // alignment: Alignment.bottomCenter,
                                     firstChild: (snapshot.connectionState ==
                                             ConnectionState.none)
-                                        ?  Center(
+                                        ? Center(
                                             child: IconButton(
-                                              icon: Icon(Icons.refresh,
-                                                  size: 32.0, color: Colors.white70),
-                                              onPressed: (){
-                                                setState(() {
-                                                  peersBloc.refresh();
-                                                });
-                                              },
-                                            ))
+                                            icon: Icon(Icons.refresh,
+                                                size: 32.0,
+                                                color: Colors.white70),
+                                            onPressed: () {
+                                              setState(() {
+                                                peersBloc.refresh();
+                                              });
+                                            },
+                                          ))
                                         : const Center(
                                             child:
                                                 const CircularProgressIndicator()),
@@ -3001,100 +3043,124 @@ class _QuoteInformationState extends State<QuoteInformation> {
                                     duration: Duration(milliseconds: 900));
                               })),
                       //);
-                    )
+                    ),
                   ],
                 ))),
       ),
     );
   }
 
-  Widget createDataTables(AsyncSnapshot snapshot){
-    List<FinancialsModel> _finList = (snapshot.data  as List<FinancialsModel>);
-    if(_finList.length != 4){
+  Widget createDataTables(AsyncSnapshot snapshot) {
+    List<FinancialsModel> _finList = (snapshot.data as List<FinancialsModel>);
+    if (_finList.length != 4) {
       setState(() {
         isMissing = true;
       });
-      return Center(child: Text("Insufficient Data!",style: TextStyle(color: Colors.white),));
+      return Center(
+          child: Text(
+        "Insufficient Data!",
+        style: TextStyle(color: Colors.white),
+      ));
     }
-    if(isMissing){
+    if (isMissing) {
       setState(() {
         isMissing = false;
       });
     }
-    return DataTable(
-        columns: <DataColumn>[
-          DataColumn(
-            label: Text("Value"),
-            numeric: false,
-          ),
-          DataColumn(
-            label: Text("${_finList.first.reportDate.year}-${_finList.first.reportDate.month}-${_finList.first.reportDate.day}"),
-            numeric: false,
-          ),
-          DataColumn(
-            label: Text("${_finList[1].reportDate.year}-${_finList[1].reportDate.month}-${_finList[1].reportDate.day}"),
-            numeric: false,
-          ),
-          DataColumn(
-            label: Text("${_finList[2].reportDate.year}-${_finList[2].reportDate.month}-${_finList[2].reportDate.day}"),
-            numeric: false,
-          ),
-          DataColumn(
-            label: Text("${_finList[3].reportDate.year}-${_finList[3].reportDate.month}-${_finList[3].reportDate.day}"),
-            numeric: false,
-          ),
-        ],
-        rows: <DataRow>[
-          DataRow(
-              cells:  cellRepresentation("Research and Dev", (i) => _finList[i].researchAndDevelopment),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Operating Expense", (i) => _finList[i].operatingExpense),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Operating Income", (i) => _finList[i].operatingIncome),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Net Income", (i) => _finList[i].netIncome),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Total Revenue", (i) => _finList[i].totalRevenue),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Cost of Revenue", (i) => _finList[i].costOfRevenue),
-          ), DataRow(
-            cells:  cellRepresentation("Gross Profit", (i) => _finList[i].grossProfit),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Current Assets", (i) => _finList[i].currentAssets),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Current Debt", (i) => _finList[i].currentDebt),
-          ), DataRow(
-            cells:  cellRepresentation("Total Debt", (i) => _finList[i].totalDebt),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Total Liabilities", (i) => _finList[i].totalLiabilities),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Current Cash", (i) => _finList[i].currentCash),
-          ), DataRow(
-            cells:  cellRepresentation("Total Cash", (i) => _finList[i].totalCash),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Shareholder Equity", (i) => _finList[i].shareHolderEquity),
-          ),
-          DataRow(
-            cells:  cellRepresentation("Cash Change", (i) => _finList[i].cashChange),
-          ), DataRow(
-            cells:  cellRepresentation("Cash flow", (i) => _finList[i].cashFlow),
-          ),
-        ]);
+    return DataTable(columns: <DataColumn>[
+      DataColumn(
+        label: Text("Value"),
+        numeric: false,
+      ),
+      DataColumn(
+        label: Text(
+            "${_finList.first.reportDate.year}-${_finList.first.reportDate.month}-${_finList.first.reportDate.day}"),
+        numeric: false,
+      ),
+      DataColumn(
+        label: Text(
+            "${_finList[1].reportDate.year}-${_finList[1].reportDate.month}-${_finList[1].reportDate.day}"),
+        numeric: false,
+      ),
+      DataColumn(
+        label: Text(
+            "${_finList[2].reportDate.year}-${_finList[2].reportDate.month}-${_finList[2].reportDate.day}"),
+        numeric: false,
+      ),
+      DataColumn(
+        label: Text(
+            "${_finList[3].reportDate.year}-${_finList[3].reportDate.month}-${_finList[3].reportDate.day}"),
+        numeric: false,
+      ),
+    ], rows: <DataRow>[
+      DataRow(
+        cells: cellRepresentation(
+            "Research and Dev", (i) => _finList[i].researchAndDevelopment),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Operating Expense", (i) => _finList[i].operatingExpense),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Operating Income", (i) => _finList[i].operatingIncome),
+      ),
+      DataRow(
+        cells: cellRepresentation("Net Income", (i) => _finList[i].netIncome),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Total Revenue", (i) => _finList[i].totalRevenue),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Cost of Revenue", (i) => _finList[i].costOfRevenue),
+      ),
+      DataRow(
+        cells:
+            cellRepresentation("Gross Profit", (i) => _finList[i].grossProfit),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Current Assets", (i) => _finList[i].currentAssets),
+      ),
+      DataRow(
+        cells:
+            cellRepresentation("Current Debt", (i) => _finList[i].currentDebt),
+      ),
+      DataRow(
+        cells: cellRepresentation("Total Debt", (i) => _finList[i].totalDebt),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Total Liabilities", (i) => _finList[i].totalLiabilities),
+      ),
+      DataRow(
+        cells:
+            cellRepresentation("Current Cash", (i) => _finList[i].currentCash),
+      ),
+      DataRow(
+        cells: cellRepresentation("Total Cash", (i) => _finList[i].totalCash),
+      ),
+      DataRow(
+        cells: cellRepresentation(
+            "Shareholder Equity", (i) => _finList[i].shareHolderEquity),
+      ),
+      DataRow(
+        cells: cellRepresentation("Cash Change", (i) => _finList[i].cashChange),
+      ),
+      DataRow(
+        cells: cellRepresentation("Cash flow", (i) => _finList[i].cashFlow),
+      ),
+    ]);
   }
 
-  List<DataCell> cellRepresentation(String title,Function applicator){
+  List<DataCell> cellRepresentation(String title, Function applicator) {
     return [
-      DataCell(Text(title,style: TextStyle(fontFamily: "Montserrat",fontWeight: FontWeight.bold),)),
+      DataCell(Text(
+        title,
+        style: TextStyle(fontFamily: "Montserrat", fontWeight: FontWeight.bold),
+      )),
       DataCell(Text(numToSimple(applicator(0)))),
       DataCell(Text(numToSimple(applicator(1)))),
       DataCell(Text(numToSimple(applicator(2)))),
@@ -3106,7 +3172,7 @@ class _QuoteInformationState extends State<QuoteInformation> {
     if (num == null) {
       return "N/A";
     }
-    if ( num.abs() > 1000000000000) {
+    if (num.abs() > 1000000000000) {
       return "${((num / 1000000000) as double).toStringAsFixed(2)} T";
     } else if (num.abs() > 1000000000) {
       return "${((num / 1000000000) as double).toStringAsFixed(2)} B";
@@ -3174,6 +3240,161 @@ class _QuoteInformationState extends State<QuoteInformation> {
           style: TextStyle(color: Colors.white),
         ),
       ],
+    );
+  }
+}
+
+class AttributionPage extends StatefulWidget {
+  @override
+  _AttributionPageState createState() => new _AttributionPageState();
+}
+
+class _AttributionPageState extends State<AttributionPage> {
+  bool isAgreed = false;
+  bool isSaving = true;
+
+  Future<bool> getAgreedState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isAgreedPref') ?? false;
+  }
+
+  Future<bool> saveAgreedState(bool state) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isAgreedPref', state);
+    print('saving ${state.toString()}');
+    return state;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      floatingActionButton: FloatingActionButton(
+        onPressed: isAgreed
+            ? () {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => ValuePeekHome()));
+              }
+            : null,
+        child: Icon(
+          Icons.navigate_next,
+          color: isAgreed ? Colors.black87 : Colors.grey,
+        ),
+      ),
+      body: Center(
+        child: Container(
+          width: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(4.0),
+                child: Text(
+                  "YAME",
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 4.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(4.0),
+                child: Text(
+                  "Yet Another Market Explorer",
+                  style: TextStyle(
+                    fontFamily: 'Pacifico',
+                    fontStyle: FontStyle.italic,
+                    fontSize: 12.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              AttributionWidget(),
+              Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FutureBuilder<bool>(
+                        future: getAgreedState(),
+                        builder: (context, snapshot) {
+                          return Checkbox(
+                            value: snapshot.data ?? false,
+                            onChanged: (bool newVal) {
+                                saveAgreedState(newVal).then((d) {
+                                  setState(() {
+                                    isAgreed = d;
+                                  });
+                              }).catchError((e)=>print(e));
+                            },
+                          );
+                        }),
+                    Container(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        "I agree to the terms of use",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  ])
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AttributionWidget extends StatelessWidget {
+  void _launchURL(BuildContext context, String site) async {
+    try {
+      await launch(
+        site,
+        option: new CustomTabsOption(
+          toolbarColor: Theme.of(context).primaryColor,
+          enableDefaultShare: true,
+          enableUrlBarHiding: true,
+          showPageTitle: true,
+          animation: new CustomTabsAnimation.slideIn(),
+          // or user defined animation.
+          extraCustomTabs: <String>[
+            // ref. https://play.google.com/store/apps/details?id=org.mozilla.firefox
+            'org.mozilla.firefox',
+            // ref. https://play.google.com/store/apps/details?id=com.microsoft.emmx
+            'com.microsoft.emmx',
+          ],
+        ),
+      );
+    } catch (e) {
+      // An exception is thrown if browser app is not installed on Android device.
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+          text: "Data provided for free by ",
+          style: TextStyle(fontFamily: 'Montserrat'),
+          children: [
+            TextSpan(
+                text: "IEX.",
+                style: TextStyle(decoration: TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () =>
+                      _launchURL(context, "https://iextrading.com/developer")),
+            TextSpan(text: " View", children: []),
+            TextSpan(
+                text: " IEX’s Terms of Use",
+                style: TextStyle(decoration: TextDecoration.underline),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => _launchURL(
+                      context, "https://iextrading.com/api-exhibit-a/"))
+          ]),
     );
   }
 }

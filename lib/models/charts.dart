@@ -56,15 +56,15 @@ class ChartModel {
     }
   }
 
-  ChartModel(
-      this.tickerSymbol, this.tickerDuration, this.chartInterval, List chartData)
+  ChartModel(this.tickerSymbol, this.tickerDuration, this.chartInterval,
+      List chartData)
       : this.chartData = ChartData.fromJson(chartData);
 
-  List<Map<String,double>> chartToOHLC () {
-    List<Map<String,double>> filterData = [];
-    this.chartData.forEach((chartData){
+  List<Map<String, double>> chartToOHLC() {
+    List<Map<String, double>> filterData = [];
+    this.chartData.forEach((chartData) {
       try {
-        Map<String,double> d = chartData.toOHLCdata();
+        Map<String, double> d = chartData.toOHLCdata();
         filterData.add(d);
       } catch (e) {
         print(e);
@@ -84,27 +84,32 @@ class ChartData {
   final double close;
   final String label;
 
-  ChartData(this.high, this.low, this.label,this.volume, this.changeOverTime, this.date,
-      this.open, this.close);
+  ChartData(this.high, this.low, this.label, this.volume, this.changeOverTime,
+      this.date, this.open, this.close);
 
-  static List<ChartData> fromJson(List chartJsonDataResponse){
-    return chartJsonDataResponse.map(
-            (chartJsonData) => ChartData.fromJsonKV(chartJsonData)
-    ).toList();
+  static List<ChartData> fromJson(List chartJsonDataResponse) {
+    return chartJsonDataResponse
+        .map((chartJsonData) => ChartData.fromJsonKV(chartJsonData))
+        .toList();
   }
 
   ChartData.fromJsonKV(Map chartJsonDataResponse)
       : this.high = chartJsonDataResponse['high']?.toDouble(),
         this.low = chartJsonDataResponse['low']?.toDouble(),
         this.volume = chartJsonDataResponse['volume']?.toDouble(),
-        this.changeOverTime = chartJsonDataResponse['changeOverTime']?.toDouble(),
+        this.changeOverTime =
+            chartJsonDataResponse['changeOverTime']?.toDouble(),
         this.date = DateTime.parse(chartJsonDataResponse['date']),
         this.label = chartJsonDataResponse['label'],
         this.open = chartJsonDataResponse['open']?.toDouble(),
         this.close = chartJsonDataResponse['close']?.toDouble();
 
-  Map<String,double> toOHLCdata () {
-    if(open != null || close != null || high != null || low != null || volume != null ){
+  Map<String, double> toOHLCdata() {
+    if (open != null ||
+        close != null ||
+        high != null ||
+        low != null ||
+        volume != null) {
       return {
         "open": open != null ? open : 0,
         "close": close != null ? close : 0,

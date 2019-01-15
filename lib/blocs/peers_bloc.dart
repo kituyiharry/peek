@@ -1,13 +1,12 @@
-import 'package:peek/network/iex_api_proxy.dart' as IEX;
-import 'package:peek/models/quote.dart';
+import 'package:yame/network/iex_api_proxy.dart' as IEX;
+import 'package:yame/models/quote.dart';
 
-
-class PeersBloc{
+class PeersBloc {
   final IEX.IexApiProxy _iexApiProxy;
   final String symbol;
   Stream<List<Quote>> peerStream = Stream.empty();
 
-  PeersBloc(this._iexApiProxy, this.symbol){
+  PeersBloc(this._iexApiProxy, this.symbol) {
     peerStream = _iexApiProxy.batchPeerProcessor(symbol).asStream();
   }
 

@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert' as Convert;
 import 'package:http/http.dart' as Http;
-import 'package:peek/models/sectors_model.dart' as Sectors;
-import 'package:peek/models/lists.dart' as MarketLists;
-import 'package:peek/models/quote.dart' as Quote;
-import 'package:peek/models/charts.dart' as Charts;
-import 'package:peek/models/company.dart' as Company;
-import 'package:peek/models/financials.dart' as Financials;
-import 'package:peek/models/stats.dart' as Stats;
+import 'package:yame/models/sectors_model.dart' as Sectors;
+import 'package:yame/models/lists.dart' as MarketLists;
+import 'package:yame/models/quote.dart' as Quote;
+import 'package:yame/models/charts.dart' as Charts;
+import 'package:yame/models/company.dart' as Company;
+import 'package:yame/models/financials.dart' as Financials;
+import 'package:yame/models/stats.dart' as Stats;
 
 class IexApiProxy {
   static final String _sEndpoint = "https://api.iextrading.com/1.0/stock/";

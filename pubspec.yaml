@@ -1,4 +1,4 @@
-name: peek
+name: yame
 description: Explore information about your favorite stocks.
 
 # The following defines the version and build number for your application.
@@ -21,11 +21,14 @@ dependencies:
   cupertino_icons: ^0.1.2
   rxdart: ^0.19.0
   http: ^0.12.0
-  #transparent_image: ^0.1.0
+  transparent_image: ^0.1.0
   flutter_candlesticks: ^0.1.2
   #flutter_range_slider: ^1.0.1
   #intl: ^0.15.7
   flutter_custom_tabs: ^0.4.0
+  shared_preferences: ^0.4.3
+  #firebase_admob: ^0.7.0
+
 
 
 

@@ -1,8 +1,8 @@
-import 'package:peek/blocs/sectors_bloc.dart';
-import 'package:peek/blocs/charts_bloc.dart';
-import 'package:peek/blocs/lists_bloc.dart';
+import 'package:yame/blocs/sectors_bloc.dart';
+import 'package:yame/blocs/charts_bloc.dart';
+import 'package:yame/blocs/lists_bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:peek/network/iex_api_proxy.dart';
+import 'package:yame/network/iex_api_proxy.dart';
 
 class IexApiProvider extends InheritedWidget {
   final SectorBloc sectorBloc;
@@ -40,20 +40,21 @@ class IexApiProvider extends InheritedWidget {
         .listsBloc;
   }
 
-  static LosersListBloc losersListBlocOf(BuildContext context){
+  static LosersListBloc losersListBlocOf(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(IexApiProvider)
-    as IexApiProvider).losersListBloc;
+            as IexApiProvider)
+        .losersListBloc;
   }
 
-  static InfocusListBloc infocusListBlocOf(BuildContext context){
+  static InfocusListBloc infocusListBlocOf(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(IexApiProvider)
-    as IexApiProvider).infocusListBloc;
+            as IexApiProvider)
+        .infocusListBloc;
   }
 
   @override
   bool updateShouldNotify(_) {
     print("Notify!!");
-    // TODO: implement updateShouldNotify
     return true;
   }
 }

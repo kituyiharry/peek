@@ -1,5 +1,5 @@
-import 'package:peek/models/charts.dart' as Charts;
-import 'package:peek/network/iex_api_proxy.dart' as IEX;
+import 'package:yame/models/charts.dart' as Charts;
+import 'package:yame/network/iex_api_proxy.dart' as IEX;
 
 class ChartsBloc {
   final IEX.IexApiProxy _iexApiProxy;
@@ -13,13 +13,13 @@ class ChartsBloc {
         _iexApiProxy.fetchChartData(symbol, duration, intervals).asStream();
   }
 
-   void fetchDifferentDuration(Charts.ChartDurations newDuration){
-     chartsStream = _iexApiProxy.fetchChartData(symbol, newDuration).asStream();
+  void fetchDifferentDuration(Charts.ChartDurations newDuration) {
+    chartsStream = _iexApiProxy.fetchChartData(symbol, newDuration).asStream();
   }
 
-  void fetchDifferentDurationIntervals(Charts.ChartDurations newDuration,int interval){
-      chartsStream = _iexApiProxy.fetchChartData(symbol, newDuration,interval).asStream();
+  void fetchDifferentDurationIntervals(
+      Charts.ChartDurations newDuration, int interval) {
+    chartsStream =
+        _iexApiProxy.fetchChartData(symbol, newDuration, interval).asStream();
   }
-
-
 }

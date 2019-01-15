@@ -9,10 +9,10 @@ class UnSplashApiProxy {
   static UnSplashApiProxy _unSplashApiProxy = null;
   final Http.Client httpClient = Http.Client();
 
-  static getInstance(){
-    if(_unSplashApiProxy != null){
+  static getInstance() {
+    if (_unSplashApiProxy != null) {
       return _unSplashApiProxy;
-    }else{
+    } else {
       return UnSplashApiProxy();
     }
   }
@@ -20,17 +20,17 @@ class UnSplashApiProxy {
   Future<UnSplashPhotoModel> fetch(String query) async {
     UnSplashPhotoModel unSplashPhotoModel;
 
-    await httpClient.get(Uri.parse('$sEndpoint$sRandomEndpoint?query=$query'),
-        headers: {"Authorization":sAuthorizationHeader})
+    await httpClient
+        .get(Uri.parse('$sEndpoint$sRandomEndpoint?query=$query'),
+            headers: {"Authorization": sAuthorizationHeader})
         .then((response) => response.body)
         .then(Convert.json.decode)
-        .then((data){
+        .then((data) {
           unSplashPhotoModel = UnSplashPhotoModel.fromJson(data);
-    });
+        });
     return unSplashPhotoModel;
   }
 }
-
 
 class UnSplashPhotoModel {
   final String iD;
@@ -44,24 +44,32 @@ class UnSplashPhotoModel {
   final UnSplashUris unSplashUris;
   final UnSplashLinks unSplashLinks;
 
+  UnSplashPhotoModel(
+      this.iD,
+      this.createdAt,
+      this.width,
+      this.height,
+      this.color,
+      this.likes,
+      this.likedByUser,
+      this.description,
+      this.unSplashUris,
+      this.unSplashLinks);
 
-  UnSplashPhotoModel(this.iD, this.createdAt, this.width, this.height, this.color, this.likes, this.likedByUser, this.description, this.unSplashUris, this.unSplashLinks);
-
-  UnSplashPhotoModel.fromJson(Map unSplashData):
-      iD = unSplashData['id'],
-      createdAt= DateTime.parse(unSplashData['created_at']) ,
-      width = unSplashData['width'],
-      height = unSplashData['height'],
-      color =  unSplashData['color'],
-      likes = unSplashData['likes'],
-      likedByUser = unSplashData['liked_by_user'],
-      description = unSplashData['description'],
-      unSplashLinks = UnSplashLinks.fromJsonMap(unSplashData['links']),
-      unSplashUris = UnSplashUris.fromJsonMap(unSplashData['urls']);
-
+  UnSplashPhotoModel.fromJson(Map unSplashData)
+      : iD = unSplashData['id'],
+        createdAt = DateTime.parse(unSplashData['created_at']),
+        width = unSplashData['width'],
+        height = unSplashData['height'],
+        color = unSplashData['color'],
+        likes = unSplashData['likes'],
+        likedByUser = unSplashData['liked_by_user'],
+        description = unSplashData['description'],
+        unSplashLinks = UnSplashLinks.fromJsonMap(unSplashData['links']),
+        unSplashUris = UnSplashUris.fromJsonMap(unSplashData['urls']);
 }
 
-class UnSplashUris{
+class UnSplashUris {
   final String raw;
   final String full;
   final String regular;
@@ -70,15 +78,15 @@ class UnSplashUris{
 
   UnSplashUris(this.raw, this.full, this.regular, this.small, this.thumb);
 
-  UnSplashUris.fromJsonMap(Map uriData) :
-        raw = uriData['raw'],
+  UnSplashUris.fromJsonMap(Map uriData)
+      : raw = uriData['raw'],
         full = uriData['full'],
         regular = uriData['regular'],
         thumb = uriData['thumb'],
         small = uriData['small'];
 }
 
-class UnSplashLinks{
+class UnSplashLinks {
   final String self;
   final String html;
   final String download;
@@ -86,11 +94,9 @@ class UnSplashLinks{
 
   UnSplashLinks(this.self, this.html, this.download, this.downloadLocation);
 
-  UnSplashLinks.fromJsonMap(Map linkData) :
-    self = linkData['self'],
-    html = linkData['html'],
-    download = linkData['download'],
-    downloadLocation = linkData['download_location'];
+  UnSplashLinks.fromJsonMap(Map linkData)
+      : self = linkData['self'],
+        html = linkData['html'],
+        download = linkData['download'],
+        downloadLocation = linkData['download_location'];
 }
-
-
