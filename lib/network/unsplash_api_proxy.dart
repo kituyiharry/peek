@@ -6,7 +6,7 @@ class UnSplashApiProxy {
   static String sAuthorizationHeader = '';
   static String sSecretKey = '';
   static String sRandomEndpoint = '/photos/random';
-  static UnSplashApiProxy _unSplashApiProxy = null;
+  static UnSplashApiProxy _unSplashApiProxy;
   final Http.Client httpClient = Http.Client();
 
   static getInstance() {

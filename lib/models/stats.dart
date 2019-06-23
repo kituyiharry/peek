@@ -16,7 +16,7 @@ class KeyStats {
   final dynamic float;
   final dynamic returnOnEquityTTM;
   //final String symbol;
-  final dynamic EBITDATTM;
+  final dynamic ebitdattm;
   final dynamic grossProfit;
   final dynamic revenueTTM;
   final dynamic revenuePerShare;
@@ -51,7 +51,7 @@ class KeyStats {
       this.float,
       this.returnOnEquityTTM,
       //this.symbol,
-      this.EBITDATTM,
+      this.ebitdattm,
       this.revenueTTM,
       this.revenuePerShare,
       this.revenuePerEmployee,
@@ -84,7 +84,7 @@ class KeyStats {
         float = jsonData['float'],
         returnOnEquityTTM = jsonData['returnOnEquity'],
         //symbol = jsonData['symbol'],
-        EBITDATTM = jsonData['EBITDA'],
+        ebitdattm = jsonData['EBITDA'],
         revenueTTM = jsonData['revenue'],
         revenuePerShare = jsonData['revenuePerShare'],
         revenuePerEmployee = jsonData['revenuePerEmployee'],

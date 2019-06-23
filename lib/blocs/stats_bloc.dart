@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:yame/models/stats.dart';
 import 'package:yame/network/iex_api_proxy.dart';
 

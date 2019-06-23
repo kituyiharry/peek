@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:yame/models/sectors_model.dart' as Sectors;
 import 'package:yame/network/iex_api_proxy.dart' as IEX;
-import 'package:rxdart/rxdart.dart';
 
 class SectorBloc {
   final IEX.IexApiProxy _iexApiProxy;

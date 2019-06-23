@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:yame/network/iex_api_proxy.dart' as IEX;
 import 'package:yame/models/quote.dart';
 

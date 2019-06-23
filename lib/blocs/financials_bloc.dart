@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:yame/network/iex_api_proxy.dart';
 import 'package:yame/models/financials.dart';
 

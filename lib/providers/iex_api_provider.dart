@@ -1,5 +1,4 @@
 import 'package:yame/blocs/sectors_bloc.dart';
-import 'package:yame/blocs/charts_bloc.dart';
 import 'package:yame/blocs/lists_bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yame/network/iex_api_proxy.dart';
