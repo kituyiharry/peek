@@ -9,7 +9,7 @@ import 'package:yame/models/charts.dart' as Charts;
 import 'package:yame/models/company.dart' as Company;
 import 'package:yame/models/financials.dart' as Financials;
 import 'package:yame/models/stats.dart' as Stats;
-
+ 
 class IexApiProxy {
   static final String _sEndpoint = "https://sandbox.iexapis.com/v1";
   static final String _sEndpointStable = "https://sandbox.iexapis.com/stable";
