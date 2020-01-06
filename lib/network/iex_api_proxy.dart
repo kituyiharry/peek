@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert' as Convert;
+import 'dart:io';
 import 'package:http/http.dart' as Http;
 import 'package:yame/models/sectors_model.dart' as Sectors;
 import 'package:yame/models/lists.dart' as MarketLists;
@@ -10,7 +11,9 @@ import 'package:yame/models/financials.dart' as Financials;
 import 'package:yame/models/stats.dart' as Stats;
 
 class IexApiProxy {
-  static final String _sEndpoint = "https://api.iextrading.com/1.0/stock/";
+  static final String _sEndpoint = "https://sandbox.iexapis.com/v1";
+  static final String _sEndpointStable = "https://sandbox.iexapis.com/stable";
+  static final String _sToken = "token=[YOUR TOKEN HERE]";
   static IexApiProxy _sIexApiProxyInstance;
   final Http.Client httpClient = Http.Client();
 
@@ -28,8 +31,10 @@ class IexApiProxy {
   Future<List<Sectors.SectorModel>> fetchSectors() async {
     List<Sectors.SectorModel> sectors = [];
     await httpClient
-        .get(Uri.parse('$_sEndpoint${Sectors.SectorModel.sSectorsEndpoint}'))
-        .then((response) => response.body)
+        .get(Uri.parse('$_sEndpoint${Sectors.SectorModel.sSectorsEndpoint}?$_sToken'))
+        .then((response){
+          //print("[$_sEndpoint${Sectors.SectorModel.sSectorsEndpoint}] Response(${response.statusCode}): ${response.body}");
+          return response.body;})
         .then(Convert.json.decode)
         .then((sectorsData) => sectorsData.forEach(
             (sector) => sectors.add(Sectors.SectorModel.fromJson(sector))));
@@ -57,11 +62,18 @@ class IexApiProxy {
     }
 
     await httpClient
-        .get(Uri.parse('$_sEndpoint$finEndPoint'))
-        .then((response) => response.body)
+        .get(Uri.parse('$_sEndpointStable$finEndPoint?$_sToken'))
+        .then((response){
+          return response.body;
+        })
         .then(Convert.json.decode)
-        .then((marketsData) => marketsData.forEach((listData) => list
-            .add(MarketLists.MarketList.fromJson(listData, marketListType))));
+        .then((marketsData) => marketsData.forEach(
+            (listData){
+              //print('[DATA:${marketsData.length}] $listData');
+              dynamic data = MarketLists.MarketList.fromJson(listData, marketListType);
+              //print('[DATA:${marketsData.length}] => $data');
+              if(data != null) list.add(data);
+            }));
 
     return list;
   }
@@ -70,8 +82,10 @@ class IexApiProxy {
     Stats.KeyStats stats;
 
     await httpClient
-        .get(Uri.parse('$_sEndpoint$symbol${Stats.KeyStats.sEndpoint}'))
-        .then((response) => response.body)
+        .get(Uri.parse('$_sEndpointStable/stock/$symbol${Stats.KeyStats.sEndpoint}?$_sToken'))
+        .then((response){
+      return response.body;
+    })
         .then(Convert.json.decode)
         .then((data) {
       try {
@@ -91,8 +105,14 @@ class IexApiProxy {
     Charts.ChartModel chartModel;
     await httpClient
         .get(Uri.parse(
-            '$_sEndpoint${Charts.ChartModel.constructEndpoint(symbol, duration, interval)}'))
-        .then((response) => response.body)
+            '$_sEndpointStable${Charts.ChartModel.constructEndpoint(symbol, duration, interval)}${
+            interval != null ? '&' : '?'
+            }$_sToken')
+
+    )
+        .then((response){
+      return response.body;
+    })
         .then(Convert.json.decode)
         .then((chartData) {
       chartModel = Charts.ChartModel(symbol, duration, interval, chartData);
@@ -104,7 +124,7 @@ class IexApiProxy {
   Future<Company.CompanyModel> fetchCompanyData(String symbol) async {
     Company.CompanyModel companyModel;
     await httpClient
-        .get(Uri.parse('$_sEndpoint$symbol${Company.CompanyModel.sEndpoint}'))
+        .get(Uri.parse('$_sEndpointStable/stock/$symbol${Company.CompanyModel.sEndpoint}?$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
@@ -129,7 +149,7 @@ class IexApiProxy {
     List<Quote.Quote> quoteList = [];
     await httpClient
         .get(Uri.parse(
-            '${_sEndpoint}market/collection/sector?collectionName=$sector'))
+            '${_sEndpointStable}/stock/market/collection/sector?collectionName=$sector&$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
@@ -159,7 +179,7 @@ class IexApiProxy {
 
     await httpClient
         .get(Uri.parse(
-            '${_sEndpoint}market/batch?symbols=${symbols.join(",")}&types=quote'))
+            '${_sEndpoint}market/batch?symbols=${symbols.join(",")}&types=quote&$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
@@ -187,7 +207,7 @@ class IexApiProxy {
     List<Financials.FinancialsModel> financialsModel = [];
     await httpClient
         .get(Uri.parse(
-            '$_sEndpoint$symbol${Financials.FinancialsModel.sEndPoint}'))
+            '$_sEndpoint$symbol${Financials.FinancialsModel.sEndPoint}&$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
@@ -202,7 +222,7 @@ class IexApiProxy {
             if (model != null) financialsModel.add(model);
           }
         }
-        //financialsModel.add(Financials.FinancialsModel.fromJsonMap(item));
+        financialsModel.add(Financials.FinancialsModel.fromJsonMap(item));
       });
     }).catchError((e) {
       print("Catch Error: $e");
@@ -213,7 +233,7 @@ class IexApiProxy {
   Future<Quote.Quote> fetchSingleQuote(String symbol) async {
     Quote.Quote quote;
     await httpClient
-        .get(Uri.parse('$_sEndpoint$symbol/quote'))
+        .get(Uri.parse('$_sEndpointStable/stock/$symbol/quote?$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
@@ -232,22 +252,26 @@ class IexApiProxy {
     List<String> _peerList = [];
     List<Quote.Quote> quotes = [];
     await httpClient
-        .get(Uri.parse('$_sEndpoint/$symbol/relevant'))
+        .get(Uri.parse('$_sEndpointStable/stock/$symbol/relevant?$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
+          //print("Data is $data");
       (data["symbols"] as List).forEach((i) {
         _peerList.add(i.toString());
         //peerList = data as List<String>;
       });
     });
 
+    print("Your peerlist! => $_peerList");
+
     await httpClient
         .get(Uri.parse(
-            '${_sEndpoint}market/batch?symbols=${_peerList.join(",")}&types=quote'))
+            '${_sEndpointStable}/stock/market/batch?symbols=${_peerList.join(",")}&types=quote&$_sToken'))
         .then((response) => response.body)
         .then(Convert.json.decode)
         .then((data) {
+          print("Data => $data");
       _peerList.forEach((sym) {
         Quote.Quote quote;
         try {
@@ -270,8 +294,10 @@ class IexApiProxy {
   Future<List<String>> fetchPeers(String symbol) async {
     List<String> peerList = [];
     await httpClient
-        .get(Uri.parse('$_sEndpoint/$symbol/peers'))
-        .then((response) => response.body)
+        .get(Uri.parse('$_sEndpointStable/stock/$symbol/peers?$_sToken'))
+        .then((response){
+      print("[$_sEndpointStable/stock/$symbol/peers?$_sToken'] Response[${response.statusCode}] = ${response.body}");
+      return response.body;})
         .then(Convert.json.decode)
         .then((data) {
       (data as List).forEach((i) {

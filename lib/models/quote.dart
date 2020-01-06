@@ -18,9 +18,9 @@ class Quote implements Comparable<Quote> {
   final dynamic delayedPrice;
   final dynamic avgTotalVolume;
   final dynamic open;
-  final DateTime openTime;
+  //final DateTime openTime;
   final dynamic close;
-  final DateTime closeTime;
+  //final DateTime closeTime;
   final String latestTime;
   final dynamic high;
   final dynamic low;
@@ -50,9 +50,9 @@ class Quote implements Comparable<Quote> {
       this.changePercent,
       this.avgTotalVolume,
       this.open,
-      this.openTime,
+      //this.openTime,
       this.close,
-      this.closeTime,
+      //this.closeTime,
       this.high,
       this.low,
       this.latestSource);
@@ -73,11 +73,9 @@ class Quote implements Comparable<Quote> {
         changePercent = quoteJsonData['changePercent'],
         avgTotalVolume = quoteJsonData['avgTotalVolume'],
         open = quoteJsonData['open'],
-        openTime =
-            DateTime.fromMillisecondsSinceEpoch(quoteJsonData['openTime']),
+        //openTime = DateTime.parse(quoteJsonData['closeTime']),
         close = quoteJsonData['close'],
-        closeTime =
-            DateTime.fromMillisecondsSinceEpoch(quoteJsonData['closeTime']),
+        //closeTime = DateTime.parse(quoteJsonData['closeTime']),
         high = quoteJsonData['high'],
         low = quoteJsonData['low'];
 

@@ -8,10 +8,10 @@ const int kColorMin = 127;
 enum MarketListType { GAINERS, LOSERS, INFOCUS }
 
 class MarketList {
-  static final String _sListsEndpoint = 'market/list';
+  static final String _sListsEndpoint = '/stock/market/list';
   static final String sListsGainers = '$_sListsEndpoint/gainers';
   static final String sListsLosers = '$_sListsEndpoint/losers';
-  static final String sListsInfocus = '$_sListsEndpoint/infocus';
+  static final String sListsInfocus = '$_sListsEndpoint/mostactive';
 
   final MarketListType _marketListType;
   final Quote.Quote _quote;

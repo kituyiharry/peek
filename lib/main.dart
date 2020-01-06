@@ -914,7 +914,7 @@ class SliverObstructionInjector extends SliverOverlapInjector {
     @required SliverOverlapAbsorberHandle handle,
     Widget child,
   })  : assert(handle != null),
-        super(key: key, handle: handle, child: child);
+        super(key: key, handle: handle, sliver: child);
 
   @override
   RenderSliverObstructionInjector createRenderObject(BuildContext context) {
@@ -1746,7 +1746,7 @@ class _QuoteInformationState extends State<QuoteInformation> {
                   physics: const BouncingScrollPhysics(),
                   slivers: <Widget>[
                     _titleSliverBoxSection("Profile",
-                        "Information and historical data about this ${widget.quote.symbol}"),
+                        "Historical data for ${widget.quote.symbol}"),
                     SliverToBoxAdapter(
                         child: Container(
                       height: 200,
@@ -2140,7 +2140,8 @@ class _QuoteInformationState extends State<QuoteInformation> {
                                                         color: Colors.white,
                                                       ),
                                                       Text(
-                                                        "${widget.quote.openTime.day}/${widget.quote.openTime.month}/${widget.quote.openTime.year}",
+                                                       // "${widget.quote.openTime.day}/${widget.quote.openTime.month}/${widget.quote.openTime.year}",
+                                                        "Unstable!",
                                                         maxLines: 9,
                                                         textAlign:
                                                             TextAlign.justify,
@@ -2167,7 +2168,8 @@ class _QuoteInformationState extends State<QuoteInformation> {
                                                         color: Colors.white,
                                                       ),
                                                       Text(
-                                                        "${widget.quote.closeTime.day}/${widget.quote.closeTime.month}/${widget.quote.closeTime.year}",
+                                                        //"${widget.quote.closeTime.day}/${widget.quote.closeTime.month}/${widget.quote.closeTime.year}",
+                                                        "Unstable",
                                                         maxLines: 9,
                                                         textAlign:
                                                             TextAlign.justify,
@@ -2980,11 +2982,16 @@ class _QuoteInformationState extends State<QuoteInformation> {
                                                 const CircularProgressIndicator()),
                                     secondChild: (!snapshot.hasData
                                         ? Center(
-                                            child: const Icon(
-                                            Icons.cloud_off,
-                                            color: Colors.white,
-                                            size: 32.0,
-                                          ))
+                                            child: IconButton(
+                                              icon: Icon(Icons.refresh,
+                                                  size: 32.0,
+                                                  color: Colors.white70),
+                                              onPressed: () {
+                                                setState(() {
+                                                  peersBloc.refresh();
+                                                });
+                                              },
+                                            ))
                                         : (snapshot.data.length > 0
                                             ? ListView.builder(
                                                 itemCount: snapshot.data.length,

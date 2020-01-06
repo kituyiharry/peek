@@ -4,14 +4,14 @@ import 'package:flutter/widgets.dart';
 import 'package:yame/network/iex_api_proxy.dart';
 
 class IexApiProvider extends InheritedWidget {
+
   final SectorBloc sectorBloc;
   final ListsBloc listsBloc;
   final LosersListBloc losersListBloc;
   final InfocusListBloc infocusListBloc;
 
   static SectorBloc sectorBlocOf(BuildContext context) {
-    var x = (context.inheritFromWidgetOfExactType(IexApiProvider)
-        as IexApiProvider);
+    var x = (context.dependOnInheritedWidgetOfExactType<IexApiProvider>());
     return x.sectorBloc;
   }
 
@@ -34,20 +34,17 @@ class IexApiProvider extends InheritedWidget {
         super(child: child, key: key);
 
   static ListsBloc listsBlocOf(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(IexApiProvider)
-            as IexApiProvider)
+    return (context.dependOnInheritedWidgetOfExactType<IexApiProvider>())
         .listsBloc;
   }
 
   static LosersListBloc losersListBlocOf(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(IexApiProvider)
-            as IexApiProvider)
+    return (context.dependOnInheritedWidgetOfExactType<IexApiProvider>())
         .losersListBloc;
   }
 
   static InfocusListBloc infocusListBlocOf(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(IexApiProvider)
-            as IexApiProvider)
+    return (context.dependOnInheritedWidgetOfExactType<IexApiProvider>())
         .infocusListBloc;
   }
 

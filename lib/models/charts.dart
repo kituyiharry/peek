@@ -50,9 +50,9 @@ class ChartModel {
     }
 
     if (interval != null) {
-      return endpoint + '?chartInterval=$interval';
+      return '/stock/' + endpoint + '?chartInterval=$interval';
     } else {
-      return endpoint;
+      return '/stock/' + endpoint;
     }
   }
 

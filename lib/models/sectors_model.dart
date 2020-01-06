@@ -1,5 +1,5 @@
 class SectorModel {
-  static final String sSectorsEndpoint = 'market/sector-performance';
+  static final String sSectorsEndpoint = '/stock/market/sector-performance';
 
   final String type, name;
   final dynamic performance;
