@@ -2,7 +2,7 @@
 
 <!--# The IEX API has been paywalled and can only be accessed through an account thus the free API Won't work anymore -->
 
-# Support for new API is in progress! :-)
+# Support for new API is in progress! :-) (School stuff at the moment)
 
 The goal is to retrieve a token from IEX and use it
 
